@@ -58,11 +58,23 @@ class BookingController extends Controller
                 $this->storeDocument($booking, $request, 'sim_file', 'sim');
             }
 
+            // Create Payment DP (unpaid initially)
+            $booking->payments()->create([
+                'payment_type' => 'dp',
+                'method' => 'manual_transfer',
+                'amount' => $booking->dp_amount,
+                'status' => 'pending'
+            ]);
+            
+            // Send Notification
+            $notificationService = app(\App\Services\NotificationService::class);
+            $notificationService->sendNewBookingNotification($booking);
+
             return redirect()->route('public.booking.show', $booking->booking_code)
-                ->with('success', 'Booking berhasil dibuat!');
+                ->with('success', 'Pemesanan berhasil dibuat! Silakan unggah dokumen KTP/SIM Anda.');
                 
         } catch (Exception $e) {
-            Log::error('Booking failed: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Booking failed: ' . $e->getMessage());
             return back()->withInput()->with('error', $e->getMessage());
         }
     }

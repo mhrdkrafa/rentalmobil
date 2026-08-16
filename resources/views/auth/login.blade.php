@@ -1,76 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Rental Mobil | Log in</title>
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  
-  @vite(['resources/css/admin.css', 'resources/js/admin.js'])
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Masuk | AutoRent</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="hold-transition login-page">
-<div class="login-box">
-  <div class="login-logo">
-    <a href="/"><b>Rental</b>Mobil</a>
-  </div>
-  <!-- /.login-logo -->
-  <div class="login-box-body">
-    <p class="login-box-msg">Sign in to start your session</p>
+<body class="font-sans antialiased text-gray-900 bg-gray-900">
+    <!-- Background Image with Overlay -->
+    <div class="fixed inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1503376760367-13eea3d452fc?q=80&w=2070&auto=format&fit=crop" alt="Background" class="w-full h-full object-cover opacity-40">
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-900/60 to-gray-900/90"></div>
+    </div>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form action="{{ route('login') }}" method="post">
-      @csrf
-      <div class="form-group has-feedback @error('email') has-error @enderror">
-        <input type="email" name="email" class="form-control" placeholder="Email" value="{{ old('email') }}" required autofocus>
-        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-        @error('email')
-            <span class="help-block">{{ $message }}</span>
-        @enderror
-      </div>
-      <div class="form-group has-feedback @error('password') has-error @enderror">
-        <input type="password" name="password" class="form-control" placeholder="Password" required>
-        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-        @error('password')
-            <span class="help-block">{{ $message }}</span>
-        @enderror
-      </div>
-      <div class="row">
-        <div class="col-xs-8">
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" name="remember"> Remember Me
-            </label>
-          </div>
+    <div class="relative z-10 min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-4">
+        <!-- Logo -->
+        <div class="mb-8 transform transition hover:scale-105 duration-300">
+            <a href="/" class="text-4xl font-bold tracking-tight text-white flex items-center gap-2">
+                <svg class="w-10 h-10 text-primary-500" fill="currentColor" viewBox="0 0 24 24"><path d="M21.707 11.293l-8-8A1 1 0 0 0 12 3v18a1 1 0 0 0 1.707.707l8-8a1 1 0 0 0 0-1.414zM10 21V3a1 1 0 0 0-1.707-.707l-8 8a1 1 0 0 0 0 1.414l8 8A1 1 0 0 0 10 21z"/></svg>
+                Auto<span class="text-primary-500">Rent</span>
+            </a>
         </div>
-        <!-- /.col -->
-        <div class="col-xs-4">
-          <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
-        </div>
-        <!-- /.col -->
-      </div>
-    </form>
 
-    @if (Route::has('password.request'))
-        <a href="{{ route('password.request') }}">I forgot my password</a><br>
-    @endif
-  </div>
-  <!-- /.login-box-body -->
-</div>
-<!-- /.login-box -->
+        <!-- Glassmorphism Card -->
+        <div class="w-full sm:max-w-md p-8 glass-dark rounded-2xl border border-gray-700/50 shadow-2xl backdrop-blur-xl">
+            <h2 class="text-2xl font-bold text-white mb-6 text-center">Selamat Datang Kembali</h2>
+            
+            <x-auth-session-status class="mb-4 text-green-400 text-center" :status="session('status')" />
+
+            <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                @csrf
+
+                <!-- Email Address -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                            </svg>
+                        </div>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
+                            class="pl-10 block w-full bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-primary-500 focus:ring-primary-500 transition-colors sm:text-sm py-3" placeholder="admin@rentalmobil.test">
+                    </div>
+                    @error('email')
+                        <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <input id="password" type="password" name="password" required
+                            class="pl-10 block w-full bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-primary-500 focus:ring-primary-500 transition-colors sm:text-sm py-3" placeholder="••••••••">
+                    </div>
+                    @error('password')
+                        <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember_me" type="checkbox" name="remember" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-600 rounded bg-gray-800">
+                        <label for="remember_me" class="ml-2 block text-sm text-gray-400">
+                            Ingat saya
+                        </label>
+                    </div>
+
+                    @if (Route::has('password.request'))
+                        <div class="text-sm">
+                            <a href="{{ route('password.request') }}" class="font-medium text-primary-500 hover:text-primary-400 transition-colors">
+                                Lupa password?
+                            </a>
+                        </div>
+                    @endif
+                </div>
+
+                <div>
+                    <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-semibold text-white bg-primary-600 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 focus:ring-offset-gray-900 transition-all duration-200 hover:shadow-primary-500/30 hover:-translate-y-0.5">
+                        Masuk ke Dashboard
+                    </button>
+                </div>
+            </form>
+            
+            <div class="mt-6 text-center text-sm text-gray-500">
+                &copy; {{ date('Y') }} AutoRent. Hak Cipta Dilindungi.
+            </div>
+        </div>
+    </div>
 </body>
 </html>

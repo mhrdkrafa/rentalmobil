@@ -1,23 +1,24 @@
 @extends('layouts.admin')
 
 @section('page_title', 'Tambah Kategori')
+@section('page_pretitle', 'Armada')
 
 @section('content')
 <div class="row">
     <div class="col-md-6">
-        <div class="box box-primary">
-            <form role="form" action="{{ route('admin.vehicle-categories.store') }}" method="POST">
+        <div class="card">
+            <form action="{{ route('admin.vehicle-categories.store') }}" method="POST">
                 @csrf
-                <div class="box-body">
-                    <div class="form-group @error('name') has-error @enderror">
-                        <label>Nama Kategori</label>
-                        <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="Contoh: City Car">
-                        @error('name') <span class="help-block">{{ $message }}</span> @enderror
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label required">Nama Kategori</label>
+                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" placeholder="Contoh: City Car" required>
+                        @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                 </div>
-                <div class="box-footer">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                    <a href="{{ route('admin.vehicle-categories.index') }}" class="btn btn-default">Batal</a>
+                <div class="card-footer text-end">
+                    <a href="{{ route('admin.vehicle-categories.index') }}" class="btn me-2">Batal</a>
+                    <button type="submit" class="btn btn-primary"><i class="ti ti-device-floppy me-1"></i>Simpan</button>
                 </div>
             </form>
         </div>

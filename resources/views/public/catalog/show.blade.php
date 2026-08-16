@@ -93,6 +93,44 @@
                         {{ $vehicle->description ?? 'Deskripsi kendaraan tidak tersedia.' }}
                     </div>
                 </div>
+
+                <!-- Reviews -->
+                @php
+                    $publishedReviews = \App\Models\Review::with('customer')
+                        ->where('vehicle_id', $vehicle->id)
+                        ->where('is_published', true)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                @endphp
+                @if($publishedReviews->count() > 0)
+                <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mt-8">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 border-b border-gray-100 pb-4">Ulasan Pelanggan</h2>
+                    <div class="space-y-6">
+                        @foreach($publishedReviews as $review)
+                        <div class="flex items-start space-x-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg">
+                                    {{ substr($review->customer->name, 0, 1) }}
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-bold text-gray-900">{{ $review->customer->name }}</h4>
+                                    <span class="text-sm text-gray-500">{{ $review->created_at->diffForHumans() }}</span>
+                                </div>
+                                <div class="flex text-yellow-400 text-sm my-1">
+                                    @for($i = 0; $i < $review->rating; $i++) ★ @endfor
+                                    @for($i = $review->rating; $i < 5; $i++) ☆ @endfor
+                                </div>
+                                @if($review->comment)
+                                    <p class="text-gray-600 mt-2 text-sm">{{ $review->comment }}</p>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
             </div>
 
             <!-- Right Column: Booking Widget & Calendar -->

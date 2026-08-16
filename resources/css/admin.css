@@ -1,5 +1,1 @@
-@import "../../public/vendor/adminlte/bootstrap/css/bootstrap.min.css";
-@import "../../public/vendor/adminlte/dist/css/AdminLTE.min.css";
-@import "../../public/vendor/adminlte/dist/css/skins/_all-skins.min.css";
-
-/* Custom overrides below */
+/* Admin styles - Tabler loaded via CDN, this file is for custom overrides only */

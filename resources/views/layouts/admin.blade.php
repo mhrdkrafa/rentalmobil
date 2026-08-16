@@ -1,171 +1,242 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Rental Mobil | Admin Dashboard</title>
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>@yield('page_title', 'Dashboard') - AutoRent Admin</title>
 
-  @vite(['resources/css/admin.css', 'resources/js/admin.js'])
+  <!-- Tabler CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.2.0/dist/css/tabler.min.css">
+  <!-- Tabler Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
+  <style>
+    .navbar-brand-image { height: 2rem; }
+    .page-pretitle { text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.04em; }
+  </style>
+  @stack('styles')
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
+<body class="layout-fluid">
+  <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.2.0/dist/js/tabler.min.js"></script>
+  <div class="page">
+    <!-- Sidebar -->
+    <aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu" aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-  <!-- Main Header -->
-  <header class="main-header">
-
-    <!-- Logo -->
-    <a href="{{ route('admin.dashboard') }}" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>R</b>M</span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>Rental</b>Mobil</span>
-    </a>
-
-    <!-- Header Navbar -->
-    <nav class="navbar navbar-static-top" role="navigation">
-      <!-- Sidebar toggle button-->
-      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-        <span class="sr-only">Toggle navigation</span>
-      </a>
-      <!-- Navbar Right Menu -->
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
-          <!-- User Account Menu -->
-          <li class="dropdown user user-menu">
-            <!-- Menu Toggle Button -->
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <!-- The user image in the navbar-->
-              <img src="{{ asset('vendor/adminlte/dist/img/user2-160x160.jpg') }}" class="user-image" alt="User Image">
-              <!-- hidden-xs hides the username on small devices so only the image appears. -->
-              <span class="hidden-xs">{{ Auth::user()->name }}</span>
-            </a>
-            <ul class="dropdown-menu">
-              <!-- The user image in the menu -->
-              <li class="user-header">
-                <img src="{{ asset('vendor/adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
-
-                <p>
-                  {{ Auth::user()->name }} - {{ ucfirst(Auth::user()->role->value) }}
-                  <small>Member since {{ Auth::user()->created_at->format('M. Y') }}</small>
-                </p>
-              </li>
-              <!-- Menu Footer-->
-              <li class="user-footer">
-                <div class="pull-left">
-                  <a href="{{ route('profile.edit') }}" class="btn btn-default btn-flat">Profile</a>
-                </div>
-                <div class="pull-right">
-                  <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn btn-default btn-flat">Sign out</button>
-                  </form>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-  <!-- Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
-
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-
-      <!-- Sidebar user panel (optional) -->
-      <div class="user-panel">
-        <div class="pull-left image">
-          <img src="{{ asset('vendor/adminlte/dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
-        </div>
-        <div class="pull-left info">
-          <p>{{ Auth::user()->name }}</p>
-          <!-- Status -->
-          <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-        </div>
-      </div>
-
-      <!-- Sidebar Menu -->
-      <ul class="sidebar-menu">
-        <li class="header">HEADER</li>
-        <!-- Optionally, you can add icons to the links -->
-        <li class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-        <li class="treeview {{ request()->is('admin/vehicle*') ? 'active' : '' }}">
-          <a href="#"><i class="fa fa-car"></i> <span>Armada</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
+        <h1 class="navbar-brand navbar-brand-autodark">
+          <a href="{{ route('admin.dashboard') }}" class="text-decoration-none">
+            <span class="text-white fw-bold fs-3">Auto<span class="text-primary">Rent</span></span>
           </a>
-          <ul class="treeview-menu">
-            <li class="{{ request()->routeIs('admin.vehicle-categories.*') ? 'active' : '' }}"><a href="{{ route('admin.vehicle-categories.index') }}">Kategori Mobil</a></li>
-            <li class="{{ request()->routeIs('admin.vehicles.*') ? 'active' : '' }}"><a href="{{ route('admin.vehicles.index') }}">Daftar Mobil</a></li>
+        </h1>
+
+        <div class="navbar-nav flex-row d-lg-none">
+          <div class="nav-item dropdown">
+            <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
+              <span class="avatar avatar-sm rounded-circle bg-primary text-white">{{ substr(Auth::user()->name, 0, 1) }}</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end">
+              <a class="dropdown-item" href="{{ route('profile.edit') }}">Profil</a>
+              <div class="dropdown-divider"></div>
+              <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="dropdown-item text-danger">Logout</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="collapse navbar-collapse" id="sidebar-menu">
+          <ul class="navbar-nav pt-lg-3">
+
+            {{-- Dashboard --}}
+            <li class="nav-item">
+              <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+                <span class="nav-link-icon"><i class="ti ti-dashboard"></i></span>
+                <span class="nav-link-title">Dashboard</span>
+              </a>
+            </li>
+
+            {{-- Armada --}}
+            <li class="nav-item dropdown {{ request()->is('admin/vehicle*') ? 'active' : '' }}">
+              <a class="nav-link dropdown-toggle" href="#navbar-armada" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="{{ request()->is('admin/vehicle*') ? 'true' : 'false' }}">
+                <span class="nav-link-icon"><i class="ti ti-car"></i></span>
+                <span class="nav-link-title">Armada</span>
+              </a>
+              <div class="dropdown-menu {{ request()->is('admin/vehicle*') ? 'show' : '' }}">
+                <a class="dropdown-item {{ request()->routeIs('admin.vehicle-categories.*') ? 'active' : '' }}" href="{{ route('admin.vehicle-categories.index') }}">
+                  Kategori Mobil
+                </a>
+                <a class="dropdown-item {{ request()->routeIs('admin.vehicles.*') ? 'active' : '' }}" href="{{ route('admin.vehicles.index') }}">
+                  Daftar Mobil
+                </a>
+              </div>
+            </li>
+
+            <li class="nav-item nav-item-separator my-1">
+              <hr class="m-0 opacity-25">
+            </li>
+            <li class="nav-item"><small class="nav-link-title text-uppercase text-muted px-3 pt-2 pb-1" style="font-size:.65rem; letter-spacing:.06em;">Manajemen</small></li>
+
+            {{-- Booking --}}
+            <li class="nav-item">
+              <a class="nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index') }}">
+                <span class="nav-link-icon"><i class="ti ti-calendar-event"></i></span>
+                <span class="nav-link-title">Booking</span>
+              </a>
+            </li>
+
+            {{-- Payments --}}
+            <li class="nav-item">
+              <a class="nav-link {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}" href="{{ route('admin.payments.index') }}">
+                <span class="nav-link-icon"><i class="ti ti-credit-card"></i></span>
+                <span class="nav-link-title">Pembayaran</span>
+              </a>
+            </li>
+
+            {{-- Customer --}}
+            <li class="nav-item">
+              <a class="nav-link {{ request()->routeIs('admin.customers.*') ? 'active' : '' }}" href="{{ route('admin.customers.index') }}">
+                <span class="nav-link-icon"><i class="ti ti-users"></i></span>
+                <span class="nav-link-title">Customer</span>
+              </a>
+            </li>
+
+            {{-- Review --}}
+            <li class="nav-item">
+              <a class="nav-link {{ request()->routeIs('admin.reviews.*') ? 'active' : '' }}" href="{{ route('admin.reviews.index') }}">
+                <span class="nav-link-icon"><i class="ti ti-star"></i></span>
+                <span class="nav-link-title">Review</span>
+              </a>
+            </li>
+
+            {{-- Laporan --}}
+            <li class="nav-item">
+              <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">
+                <span class="nav-link-icon"><i class="ti ti-chart-bar"></i></span>
+                <span class="nav-link-title">Laporan</span>
+              </a>
+            </li>
+
+            <li class="nav-item nav-item-separator my-1">
+              <hr class="m-0 opacity-25">
+            </li>
+            <li class="nav-item"><small class="nav-link-title text-uppercase text-muted px-3 pt-2 pb-1" style="font-size:.65rem; letter-spacing:.06em;">Sistem</small></li>
+
+            {{-- Pengaturan --}}
+            <li class="nav-item dropdown {{ request()->routeIs('admin.settings.*') || request()->routeIs('admin.notification-logs.*') ? 'active' : '' }}">
+              <a class="nav-link dropdown-toggle" href="#navbar-settings" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="{{ request()->routeIs('admin.settings.*') || request()->routeIs('admin.notification-logs.*') ? 'true' : 'false' }}">
+                <span class="nav-link-icon"><i class="ti ti-settings"></i></span>
+                <span class="nav-link-title">Pengaturan</span>
+              </a>
+              <div class="dropdown-menu {{ request()->routeIs('admin.settings.*') || request()->routeIs('admin.notification-logs.*') ? 'show' : '' }}">
+                <a class="dropdown-item {{ request()->routeIs('admin.settings.notifications') ? 'active' : '' }}" href="{{ route('admin.settings.notifications') }}">
+                  Notifikasi
+                </a>
+                <a class="dropdown-item {{ request()->routeIs('admin.notification-logs.*') ? 'active' : '' }}" href="{{ route('admin.notification-logs.index') }}">
+                  Log Notifikasi
+                </a>
+              </div>
+            </li>
+
           </ul>
-        </li>
-        <li><a href="#"><i class="fa fa-calendar-check-o"></i> <span>Booking</span></a></li>
-        <li><a href="#"><i class="fa fa-id-card-o"></i> <span>Driver</span></a></li>
-        <li><a href="#"><i class="fa fa-money"></i> <span>Pembayaran</span></a></li>
-        <li><a href="#"><i class="fa fa-users"></i> <span>Customer</span></a></li>
-        <li><a href="#"><i class="fa fa-pie-chart"></i> <span>Laporan</span></a></li>
-        <li><a href="#"><i class="fa fa-cogs"></i> <span>Pengaturan</span></a></li>
-      </ul>
-      <!-- /.sidebar-menu -->
-    </section>
-    <!-- /.sidebar -->
-  </aside>
+        </div>
+      </div>
+    </aside>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        @yield('page_title', 'Page Header')
-        <small>@yield('page_description', 'Optional description')</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="{{ route('admin.dashboard') }}"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active">@yield('page_title', 'Here')</li>
-      </ol>
-    </section>
+    <!-- Main Content -->
+    <div class="page-wrapper">
+      <!-- Top Navbar -->
+      <header class="navbar navbar-expand-md d-none d-lg-flex d-print-none">
+        <div class="container-xl">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
-    <!-- Main content -->
-    <section class="content">
+          <div class="navbar-nav flex-row order-md-last">
+            <div class="nav-item dropdown">
+              <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
+                <span class="avatar avatar-sm rounded-circle bg-primary text-white">{{ substr(Auth::user()->name, 0, 1) }}</span>
+                <div class="d-none d-xl-block ps-2">
+                  <div>{{ Auth::user()->name }}</div>
+                  <div class="mt-1 small text-secondary">{{ ucfirst(Auth::user()->role->value) }}</div>
+                </div>
+              </a>
+              <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <a href="{{ route('profile.edit') }}" class="dropdown-item">Profil</a>
+                <div class="dropdown-divider"></div>
+                <form method="POST" action="{{ route('logout') }}">
+                  @csrf
+                  <button type="submit" class="dropdown-item text-danger">
+                    <i class="ti ti-logout me-1"></i> Logout
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
 
-      <!-- Your Page Content Here -->
-      @yield('content')
+      <!-- Page Header -->
+      <div class="page-header d-print-none">
+        <div class="container-xl">
+          <div class="page-pretitle">@yield('page_pretitle', 'Overview')</div>
+          <h2 class="page-title">@yield('page_title', 'Dashboard')</h2>
+        </div>
+      </div>
 
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
+      <!-- Page Body -->
+      <div class="page-body">
+        <div class="container-xl">
 
-  <!-- Main Footer -->
-  <footer class="main-footer">
-    <!-- To the right -->
-    <div class="pull-right hidden-xs">
-      Version 1.0.0
+          {{-- Flash Messages --}}
+          @if(session('success'))
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="d-flex">
+              <div><i class="ti ti-check icon alert-icon"></i></div>
+              <div>{{ session('success') }}</div>
+            </div>
+            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+          </div>
+          @endif
+
+          @if(session('error'))
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="d-flex">
+              <div><i class="ti ti-alert-circle icon alert-icon"></i></div>
+              <div>{{ session('error') }}</div>
+            </div>
+            <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+          </div>
+          @endif
+
+          @yield('content')
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="footer footer-transparent d-print-none">
+        <div class="container-xl">
+          <div class="row text-center align-items-center flex-row-reverse">
+            <div class="col-auto ms-auto">
+              <span class="text-secondary">v1.0.0</span>
+            </div>
+            <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+              Copyright &copy; {{ date('Y') }} <a href="{{ route('public.home') }}" class="link-secondary">AutoRent</a>. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
-    <!-- Default to the left -->
-    <strong>Copyright &copy; {{ date('Y') }} <a href="#">RentalMobil</a>.</strong> All rights reserved.
-  </footer>
-</div>
-<!-- ./wrapper -->
+  </div>
 
-<!-- REQUIRED JS SCRIPTS -->
+  <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
 
-<!-- AdminLTE JS loaded via Vite -->
+  @stack('scripts')
 </body>
 </html>

@@ -11,14 +11,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
             \Illuminate\Support\Facades\Route::middleware(['web', 'auth', 'role:super_admin,admin,staff'])
-                ->prefix('admin')
-                ->name('admin.')
                 ->group(base_path('routes/admin.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+        ]);
+
+        $middleware->validateCsrfTokens(except: [
+            '/webhooks/midtrans'
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

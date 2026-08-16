@@ -1,66 +1,47 @@
 @extends('layouts.admin')
 
 @section('page_title', 'Kelola Foto: ' . $vehicle->name)
+@section('page_pretitle', 'Armada')
 
 @section('content')
-<div class="row">
-    <div class="col-xs-12">
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                {{ session('success') }}
+<div class="card mb-3">
+    <div class="card-header"><h3 class="card-title">Upload Foto Baru</h3></div>
+    <form action="{{ route('admin.vehicles.images.store', $vehicle) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="card-body">
+            <div class="mb-3">
+                <input type="file" class="form-control" name="images[]" multiple accept="image/*" required>
             </div>
-        @endif
-        @if($errors->any())
-            <div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                Terdapat kesalahan pada file yang diupload.
-            </div>
-        @endif
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary"><i class="ti ti-upload me-1"></i>Upload</button>
+            <a href="{{ route('admin.vehicles.index') }}" class="btn ms-2">Kembali ke Daftar Mobil</a>
+        </div>
+    </form>
+</div>
 
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">Upload Foto Baru</h3>
+<div class="row row-cards">
+    @foreach($images as $image)
+        <div class="col-md-3">
+            <div class="card">
+                <img src="{{ asset('storage/' . $image->image_path) }}" alt="Foto Mobil" class="card-img-top" style="height:180px; object-fit:cover;">
+                <div class="card-body text-center p-2">
+                    @if($image->is_primary)
+                        <span class="badge bg-success mb-2">Primary</span>
+                    @else
+                        <form action="{{ route('admin.vehicles.images.primary', $image) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-sm mb-2">Set Primary</button>
+                        </form>
+                    @endif
+                    <form action="{{ route('admin.vehicles.images.destroy', $image) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus foto ini?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger mb-2"><i class="ti ti-trash"></i></button>
+                    </form>
+                </div>
             </div>
-            <form action="{{ route('admin.vehicles.images.store', $vehicle) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="box-body">
-                    <div class="form-group">
-                        <input type="file" name="images[]" multiple accept="image/*" required>
-                    </div>
-                </div>
-                <div class="box-footer">
-                    <button type="submit" class="btn btn-primary">Upload</button>
-                    <a href="{{ route('admin.vehicles.index') }}" class="btn btn-default">Kembali ke Daftar Mobil</a>
-                </div>
-            </form>
         </div>
-        
-        <div class="row">
-            @foreach($images as $image)
-                <div class="col-md-3">
-                    <div class="thumbnail">
-                        <img src="{{ asset('storage/' . $image->image_path) }}" alt="Foto Mobil" style="width:100%; height:150px; object-fit:cover;">
-                        <div class="caption text-center">
-                            @if($image->is_primary)
-                                <span class="label label-success">Primary</span>
-                            @else
-                                <form action="{{ route('admin.vehicles.images.primary', $image) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit" class="btn btn-xs btn-default">Set Primary</button>
-                                </form>
-                            @endif
-                            <form action="{{ route('admin.vehicles.images.destroy', $image) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus foto ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Hapus</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
+    @endforeach
 </div>
 @endsection

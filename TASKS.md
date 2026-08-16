@@ -105,14 +105,17 @@ Urutan dikerjakan top-down per fase. Setiap task idealnya jadi 1 PR/commit unit 
 - [ ] Logging semua notifikasi ke `notification_logs`
 - [ ] Fallback kirim email jika WA gagal
 
-## Fase 10 — Customer, Review, Laporan
-
-- [ ] Modul admin: manajemen customer (list, detail riwayat sewa, blacklist)
-- [ ] Fitur review & rating dari customer setelah booking `completed`
-- [ ] Moderasi review di admin (publish/unpublish)
-- [ ] Tampilkan review di halaman detail mobil publik
-- [ ] Dashboard laporan: pendapatan harian/bulanan, grafik okupansi per unit
-- [ ] Export laporan ke Excel/PDF
+## Fase 10 — Customer, Review & Laporan
+- [x] **Customer Management**:
+  - [x] CRUD Customer sederhana di Admin.
+  - [x] Fitur blacklist customer nakal.
+- [x] **Sistem Review**:
+  - [x] Form review di halaman publik setelah booking `completed`.
+  - [x] Admin bisa hide/publish review.
+  - [x] Tampilkan review di halaman detail mobil.
+- [x] **Laporan**:
+  - [x] Update Dashboard dengan grafik penyewaan & pendapatan (Chart.js).
+  - [x] Halaman Laporan Transaksi (filter tanggal, export PDF).
 
 ## Fase 11 — Polish, Testing, Deployment
 

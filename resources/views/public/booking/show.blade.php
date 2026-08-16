@@ -104,6 +104,53 @@
                         </button>
                     </div>
                 @endif
+
+                {{-- Review Section --}}
+                @if($booking->status->value === 'completed')
+                    @php
+                        $review = \App\Models\Review::where('booking_id', $booking->id)->first();
+                    @endphp
+
+                    @if(!$review)
+                        <div class="mt-8 bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Bagaimana Pengalaman Anda?</h3>
+                            <p class="text-gray-600 mb-4">Penyewaan telah selesai. Berikan penilaian Anda terhadap kendaraan dan layanan kami.</p>
+                            
+                            <form action="{{ route('public.booking.review', $booking->booking_code) }}" method="POST">
+                                @csrf
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Rating Bintang</label>
+                                    <select name="rating" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-300" required>
+                                        <option value="5">⭐⭐⭐⭐⭐ (5 - Sangat Baik)</option>
+                                        <option value="4">⭐⭐⭐⭐ (4 - Baik)</option>
+                                        <option value="3">⭐⭐⭐ (3 - Cukup)</option>
+                                        <option value="2">⭐⭐ (2 - Kurang)</option>
+                                        <option value="1">⭐ (1 - Buruk)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Ulasan (Opsional)</label>
+                                    <textarea name="comment" rows="3" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-300" placeholder="Ceritakan pengalaman Anda menyewa mobil ini..."></textarea>
+                                </div>
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-300">
+                                    Kirim Ulasan
+                                </button>
+                            </form>
+                        </div>
+                    @else
+                        <div class="mt-8 bg-green-50/50 p-6 rounded-2xl border border-green-100">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Terima kasih atas ulasan Anda!</h3>
+                            <div class="flex text-yellow-400 text-lg mb-2">
+                                @for($i = 0; $i < $review->rating; $i++) ★ @endfor
+                                @for($i = $review->rating; $i < 5; $i++) ☆ @endfor
+                            </div>
+                            @if($review->comment)
+                                <p class="text-gray-600 italic">"{{ $review->comment }}"</p>
+                            @endif
+                        </div>
+                    @endif
+                @endif
+
             </div>
         </div>
     </div>

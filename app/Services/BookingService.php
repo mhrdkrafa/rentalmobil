@@ -104,4 +104,29 @@ class BookingService
 
         return $datePrefix . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
+
+    /**
+     * Calculate late fee based on actual end date
+     * Grace period is 1 hour. Late fee is proportional per hour.
+     */
+    public function calculateLateFee(Booking $booking, string $actualEndDate): float
+    {
+        $expectedEnd = Carbon::parse($booking->end_date);
+        $actualEnd = Carbon::parse($actualEndDate);
+
+        if ($actualEnd->lessThanOrEqualTo($expectedEnd)) {
+            return 0;
+        }
+
+        $hoursLate = $expectedEnd->diffInHours($actualEnd, false);
+
+        // 1 hour grace period
+        if ($hoursLate <= 1) {
+            return 0;
+        }
+
+        // Daily rate / 24 * hours late
+        $hourlyRate = $booking->price_per_day / 24;
+        return round($hourlyRate * $hoursLate);
+    }
 }
