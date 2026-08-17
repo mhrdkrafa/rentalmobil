@@ -209,7 +209,7 @@
                     
                     <div class="flex items-start mb-6">
                         <div class="flex items-center h-5">
-                            <input type="checkbox" required class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
+                            <input type="checkbox" name="terms" :required="step === 4" class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
                         </div>
                         <div class="ml-3 text-sm">
                             <label class="font-medium text-gray-700">Saya menyetujui syarat & ketentuan AutoRent</label>

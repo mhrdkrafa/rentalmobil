@@ -84,7 +84,7 @@
                 <td>{{ $booking->vehicle->name }}</td>
                 <td class="text-center">{{ $booking->total_days }} Hari</td>
                 <td class="text-right">{{ number_format($booking->total_price, 0, ',', '.') }}</td>
-                <td class="text-center">{{ strtoupper($booking->status) }}</td>
+                <td class="text-center">{{ strtoupper($booking->status->value) }}</td>
             </tr>
             @empty
             <tr>
@@ -102,7 +102,7 @@
             </tr>
             <tr>
                 <td><strong>Transaksi Selesai:</strong></td>
-                <td class="text-right">{{ $bookings->where('status', 'completed')->count() }}</td>
+                <td class="text-right">{{ $bookings->filter(function($b) { return $b->status->value === 'completed'; })->count() }}</td>
             </tr>
             <tr>
                 <td><strong>Total Pendapatan:</strong></td>

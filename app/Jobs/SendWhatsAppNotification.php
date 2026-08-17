@@ -56,10 +56,11 @@ class SendWhatsAppNotification implements ShouldQueue
             
             NotificationLog::create([
                 'booking_id' => $this->bookingId,
+                'channel' => 'whatsapp',
                 'type' => $this->type,
                 'recipient' => $this->phone,
-                'message' => $this->message,
-                'status' => $success ? 'success' : 'failed',
+                'payload' => $this->message,
+                'status' => $success ? 'sent' : 'failed',
                 'response' => $response->body()
             ]);
 
@@ -77,9 +78,10 @@ class SendWhatsAppNotification implements ShouldQueue
         } catch (\Exception $e) {
             NotificationLog::create([
                 'booking_id' => $this->bookingId,
+                'channel' => 'whatsapp',
                 'type' => $this->type,
                 'recipient' => $this->phone,
-                'message' => $this->message,
+                'payload' => $this->message,
                 'status' => 'failed',
                 'response' => $e->getMessage()
             ]);

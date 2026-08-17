@@ -14,6 +14,9 @@
 
     <!-- Vite Styles and Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Extra Styles -->
+    @stack('styles')
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans antialiased overflow-x-hidden" x-data="{ mobileMenuOpen: false, scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
 
@@ -33,7 +36,7 @@
                     <a href="{{ route('public.home') }}" class="text-gray-700 hover:text-primary-600 font-medium transition duration-150 ease-in-out">Beranda</a>
                     <a href="{{ route('public.catalog.index') }}" class="text-gray-700 hover:text-primary-600 font-medium transition duration-150 ease-in-out">Armada</a>
                     <a href="{{ route('public.booking.check') }}" class="text-gray-700 hover:text-primary-600 font-medium transition duration-150 ease-in-out">Cek Pesanan</a>
-                    <a href="#" class="text-gray-700 hover:text-primary-600 font-medium transition duration-150 ease-in-out">Kontak</a>
+                    <a href="{{ route('public.pages.contact') }}" class="text-gray-700 hover:text-primary-600 font-medium transition duration-150 ease-in-out">Kontak</a>
                     
                     @auth
                         <a href="{{ route('admin.dashboard') }}" class="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2 rounded-full font-semibold transition duration-150 ease-in-out shadow-lg hover:shadow-primary-500/50">Dashboard</a>
@@ -66,7 +69,7 @@
                 <a href="{{ route('public.home') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-primary-600 hover:bg-gray-50">Beranda</a>
                 <a href="{{ route('public.catalog.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-primary-600 hover:bg-gray-50">Armada</a>
                 <a href="{{ route('public.booking.check') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-primary-600 hover:bg-gray-50">Cek Pesanan</a>
-                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-primary-600 hover:bg-gray-50">Kontak</a>
+                <a href="{{ route('public.pages.contact') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-primary-600 hover:bg-gray-50">Kontak</a>
             </div>
         </div>
     </nav>
@@ -118,11 +121,12 @@
                     &copy; {{ date('Y') }} AutoRent. All rights reserved.
                 </p>
                 <div class="space-x-4 mt-4 md:mt-0 text-sm">
-                    <a href="#" class="text-gray-500 hover:text-white transition">Kebijakan Privasi</a>
-                    <a href="#" class="text-gray-500 hover:text-white transition">Syarat & Ketentuan</a>
+                    <a href="{{ route('public.pages.terms') }}" class="text-gray-500 hover:text-white transition">Kebijakan Privasi</a>
+                    <a href="{{ route('public.pages.terms') }}" class="text-gray-500 hover:text-white transition">Syarat & Ketentuan</a>
                 </div>
             </div>
         </div>
     </footer>
+    @stack('scripts')
 </body>
 </html>

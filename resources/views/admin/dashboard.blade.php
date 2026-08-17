@@ -28,7 +28,7 @@
                 <div class="d-flex align-items-center">
                     <div class="subheader text-secondary">Total Pendapatan</div>
                 </div>
-                <div class="h1 mb-0 mt-2 text-success">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</div>
+                <div class="h1 mb-0 mt-2 text-primary">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</div>
             </div>
             <div class="card-footer">
                 <a href="{{ route('admin.reports.index') }}" class="btn btn-link p-0 text-secondary">
@@ -125,7 +125,7 @@
                                 @php
                                     $colors = ['pending' => 'warning', 'confirmed' => 'info', 'active' => 'primary', 'completed' => 'success', 'cancelled' => 'danger'];
                                 @endphp
-                                <span class="badge bg-{{ $colors[$booking->status] ?? 'secondary' }}">{{ strtoupper($booking->status) }}</span>
+                                <span class="badge bg-{{ $colors[$booking->status->value] ?? 'secondary' }}">{{ strtoupper($booking->status->value) }}</span>
                             </td>
                         </tr>
                         @empty
@@ -153,9 +153,9 @@ document.addEventListener("DOMContentLoaded", function() {
             datasets: [{
                 label: 'Pendapatan',
                 data: {!! json_encode($revenueData) !!},
-                borderColor: '#206bc4',
-                backgroundColor: 'rgba(32, 107, 196, 0.06)',
-                borderWidth: 2,
+                borderColor: '#0d9488',
+                backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                borderWidth: 3,
                 fill: true,
                 tension: 0.4
             }]
@@ -176,7 +176,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     beginAtZero: true,
                     ticks: {
                         callback: v => 'Rp ' + (v / 1000000).toFixed(0) + 'jt'
-                    }
+                    },
+                    grid: { color: '#f1f5f9' }
+                },
+                x: {
+                    grid: { display: false }
                 }
             }
         }
@@ -189,7 +193,8 @@ document.addEventListener("DOMContentLoaded", function() {
             labels: ['Pending', 'Confirmed', 'Active', 'Completed', 'Cancelled'],
             datasets: [{
                 data: [{{ $statusData['pending'] }}, {{ $statusData['confirmed'] }}, {{ $statusData['active'] }}, {{ $statusData['completed'] }}, {{ $statusData['cancelled'] }}],
-                backgroundColor: ['#f76707', '#17a2b8', '#206bc4', '#2fb344', '#d63939']
+                backgroundColor: ['#f59e0b', '#0ea5e9', '#0d9488', '#10b981', '#ef4444'],
+                borderWidth: 0
             }]
         },
         options: {

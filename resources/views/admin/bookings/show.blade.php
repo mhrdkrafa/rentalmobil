@@ -15,9 +15,9 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="subheader mb-1">Pembayaran</div>
-                        @if($booking->payment_status->value === 'paid')
+                        @if($booking->payment_status->value === 'paid_full')
                             <span class="badge bg-success">LUNAS</span>
-                        @elseif($booking->payment_status->value === 'partial')
+                        @elseif($booking->payment_status->value === 'dp_paid')
                             <span class="badge bg-warning">DP DIBAYAR</span>
                         @else
                             <span class="badge bg-danger">BELUM DIBAYAR</span>

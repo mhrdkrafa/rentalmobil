@@ -19,7 +19,7 @@ class ReviewController extends Controller
         $booking = Booking::where('booking_code', $bookingCode)->firstOrFail();
 
         // Ensure booking is completed
-        if ($booking->status !== 'completed') {
+        if ($booking->status->value !== 'completed') {
             return back()->with('error', 'Hanya pesanan yang sudah selesai yang dapat direview.');
         }
 

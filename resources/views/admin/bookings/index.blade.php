@@ -49,9 +49,9 @@
                     <td>{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m') }} - {{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</td>
                     <td>Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
                     <td>
-                        @if($booking->payment_status->value === 'paid')
+                        @if($booking->payment_status->value === 'paid_full')
                             <span class="badge bg-success">Lunas</span>
-                        @elseif($booking->payment_status->value === 'partial')
+                        @elseif($booking->payment_status->value === 'dp_paid')
                             <span class="badge bg-warning">DP / Parsial</span>
                         @else
                             <span class="badge bg-danger">Belum Bayar</span>

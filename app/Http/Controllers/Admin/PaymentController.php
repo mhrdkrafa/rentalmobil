@@ -40,10 +40,10 @@ class PaymentController extends Controller
 
                 $booking = $payment->booking;
                 if ($payment->payment_type->value === 'dp') {
-                    $booking->payment_status = 'partial';
+                    $booking->payment_status = 'dp_paid';
                     $booking->status = 'confirmed';
                 } else if ($payment->payment_type->value === 'pelunasan') {
-                    $booking->payment_status = 'paid';
+                    $booking->payment_status = 'paid_full';
                     $booking->status = 'confirmed';
                 }
                 $booking->save();

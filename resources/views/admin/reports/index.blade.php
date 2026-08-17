@@ -80,7 +80,7 @@
                     <td>Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
                     <td>
                         @php $sc = ['completed' => 'success', 'cancelled' => 'danger', 'pending' => 'warning', 'confirmed' => 'info', 'active' => 'primary']; @endphp
-                        <span class="badge bg-{{ $sc[$booking->status] ?? 'secondary' }}">{{ strtoupper($booking->status) }}</span>
+                        <span class="badge bg-{{ $sc[$booking->status->value] ?? 'secondary' }}">{{ strtoupper($booking->status->value) }}</span>
                     </td>
                 </tr>
                 @empty

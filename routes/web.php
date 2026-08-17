@@ -9,14 +9,20 @@ use App\Http\Controllers\Api\VehicleAvailabilityController;
 use App\Http\Controllers\Public\BookingController;
 use App\Http\Controllers\Public\CheckBookingController;
 
+use App\Http\Controllers\Public\PageController;
+
 // Public Routes
 Route::get('/', HomeController::class)->name('public.home');
 Route::get('/katalog', [VehicleCatalogController::class, 'index'])->name('public.catalog.index');
 Route::get('/katalog/{vehicle}', [VehicleCatalogController::class, 'show'])->name('public.catalog.show');
 
+// Static Pages
+Route::get('/syarat-ketentuan', [PageController::class, 'terms'])->name('public.pages.terms');
+Route::get('/hubungi-kami', [PageController::class, 'contact'])->name('public.pages.contact');
+
 // Booking Flow
 Route::get('/booking/create/{vehicle}', [\App\Http\Controllers\Public\BookingController::class, 'create'])->name('public.booking.create');
-Route::post('/booking/store/{vehicle}', [\App\Http\Controllers\Public\BookingController::class, 'store'])->name('public.booking.store');
+Route::post('/booking/store/{vehicle}', [\App\Http\Controllers\Public\BookingController::class, 'store'])->middleware('throttle:5,1')->name('public.booking.store');
 
 // Reviews
 Route::post('/booking/{booking_code}/review', [\App\Http\Controllers\Public\ReviewController::class, 'store'])->name('public.booking.review');
@@ -34,6 +40,7 @@ Route::post('/cek-booking', [CheckBookingController::class, 'check'])->name('pub
 
 // Public API
 Route::get('/api/availability/{vehicle}', [VehicleAvailabilityController::class, 'check'])->name('api.availability.check');
+Route::post('/webhooks/midtrans', [\App\Http\Controllers\Api\MidtransWebhookController::class, 'handle'])->name('webhooks.midtrans');
 
 Route::get('/dashboard', function () {
     return redirect()->route('admin.dashboard');

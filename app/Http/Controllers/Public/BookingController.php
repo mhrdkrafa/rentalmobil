@@ -79,11 +79,32 @@ class BookingController extends Controller
         }
     }
 
-    public function show($bookingCode)
+    public function show(Request $request, $bookingCode)
     {
-        $booking = Booking::with(['vehicle.category', 'customer'])
+        $booking = Booking::with(['vehicle.category', 'customer', 'payments'])
             ->where('booking_code', $bookingCode)
             ->firstOrFail();
+
+        // Local testing webhook workaround
+        if ($request->has('payment_success')) {
+            $pendingPayment = $booking->payments()->where('status', 'pending')->latest()->first();
+            if ($pendingPayment) {
+                $pendingPayment->status = 'verified';
+                $pendingPayment->verified_at = now();
+                $pendingPayment->save();
+
+                if ($pendingPayment->payment_type === 'dp') {
+                    $booking->payment_status = 'dp_paid';
+                    $booking->status = 'confirmed';
+                } else if ($pendingPayment->payment_type === 'pelunasan') {
+                    $booking->payment_status = 'paid_full';
+                    $booking->status = 'confirmed';
+                }
+                $booking->save();
+                
+                return redirect()->route('public.booking.show', $bookingCode)->with('success', 'Pembayaran berhasil diverifikasi (Local Test Mode).');
+            }
+        }
 
         return view('public.booking.show', compact('booking'));
     }

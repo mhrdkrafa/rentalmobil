@@ -4,7 +4,7 @@
 
 @push('scripts')
     <!-- Midtrans Snap JS -->
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+    <script src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
 @endpush
 
 @section('content')
@@ -80,7 +80,7 @@
                         <svg class="w-6 h-6 text-gray-400 transform transition-transform" :class="{'rotate-180': showManual}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                     
-                    <div x-show="showManual" x-collapse class="mt-6 border-t pt-6" style="display: none;">
+                    <div x-show="showManual" x-transition class="mt-6 border-t pt-6" style="display: none;">
                         <div class="bg-gray-50 p-4 rounded-xl mb-6">
                             <p class="text-sm text-gray-600 mb-2">Silakan transfer sesuai nominal ke salah satu rekening berikut:</p>
                             <ul class="space-y-2">
@@ -136,7 +136,7 @@
                 window.snap.pay('{{ $snapToken }}', {
                     onSuccess: function(result){
                         // Redirect to success page
-                        window.location.href = "{{ route('public.booking.show', $booking->booking_code) }}";
+                        window.location.href = "{{ route('public.booking.show', $booking->booking_code) }}?payment_success=1";
                     },
                     onPending: function(result){
                         // Redirect to show page so they can check status later

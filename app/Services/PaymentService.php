@@ -112,10 +112,10 @@ class PaymentService
                 $booking = $payment->booking;
                 
                 if ($payment->payment_type === 'dp') {
-                    $booking->payment_status = 'partial';
+                    $booking->payment_status = 'dp_paid';
                     $booking->status = 'confirmed';
                 } else if ($payment->payment_type === 'pelunasan') {
-                    $booking->payment_status = 'paid';
+                    $booking->payment_status = 'paid_full';
                     $booking->status = 'confirmed';
                 }
                 

@@ -7,6 +7,11 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>@yield('page_title', 'Dashboard') - AutoRent Admin</title>
 
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <!-- Tabler CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.2.0/dist/css/tabler.min.css">
   <!-- Tabler Icons -->
@@ -16,6 +21,8 @@
     .navbar-brand-image { height: 2rem; }
     .page-pretitle { text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.04em; }
   </style>
+  
+  @vite(['resources/css/admin.css', 'resources/js/admin.js'])
   @stack('styles')
 </head>
 <body class="layout-fluid">
@@ -98,6 +105,7 @@
               </a>
             </li>
 
+            @if(auth()->user()->role->value !== 'staff')
             {{-- Customer --}}
             <li class="nav-item">
               <a class="nav-link {{ request()->routeIs('admin.customers.*') ? 'active' : '' }}" href="{{ route('admin.customers.index') }}">
@@ -105,6 +113,7 @@
                 <span class="nav-link-title">Customer</span>
               </a>
             </li>
+            @endif
 
             {{-- Review --}}
             <li class="nav-item">
@@ -114,6 +123,7 @@
               </a>
             </li>
 
+            @if(auth()->user()->role->value !== 'staff')
             {{-- Laporan --}}
             <li class="nav-item">
               <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">
@@ -142,6 +152,7 @@
                 </a>
               </div>
             </li>
+            @endif
 
           </ul>
         </div>

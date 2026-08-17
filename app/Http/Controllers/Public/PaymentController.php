@@ -21,17 +21,17 @@ class PaymentController extends Controller
     {
         $booking = Booking::with(['vehicle.category', 'customer'])->where('booking_code', $bookingCode)->firstOrFail();
 
-        if ($booking->payment_status->value === 'paid') {
+        if ($booking->payment_status->value === 'paid_full') {
             return redirect()->route('public.booking.show', $bookingCode)->with('success', 'Pemesanan ini sudah lunas.');
         }
 
         // Determine what needs to be paid (DP or Full)
-        $paymentType = 'pelunasan';
-        $amountToPay = $booking->total_price;
-
         if ($booking->payment_status->value === 'unpaid') {
             $paymentType = 'dp';
             $amountToPay = $booking->dp_amount;
+        } else {
+            $paymentType = 'pelunasan';
+            $amountToPay = $booking->total_price - $booking->dp_amount;
         }
 
         // Generate Midtrans Snap Token

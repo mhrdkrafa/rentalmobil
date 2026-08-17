@@ -119,14 +119,14 @@ Urutan dikerjakan top-down per fase. Setiap task idealnya jadi 1 PR/commit unit 
 
 ## Fase 11 — Polish, Testing, Deployment
 
-- [ ] Review keamanan: rate limiting form booking, validasi upload file, cek middleware role di semua route admin
-- [ ] Optimasi query (cek N+1, tambah index yang kurang)
-- [ ] Responsive check halaman publik di berbagai device
-- [ ] Setup queue worker (supervisor) untuk production
-- [ ] Setup scheduled task (cron) untuk auto-cancel booking & reminder
-- [ ] Siapkan environment production (`.env` production, storage link, `npm run build`)
-- [ ] Dokumentasi deployment (README deployment steps)
-- [ ] UAT (User Acceptance Test) bersama calon pemilik rental mobil
+- [x] Review keamanan: rate limiting form booking, validasi upload file, cek middleware role di semua route admin
+- [x] Optimasi query (cek N+1, tambah index yang kurang)
+- [x] Responsive check halaman publik di berbagai device
+- [x] Setup queue worker (supervisor) untuk production
+- [x] Setup scheduled task (cron) untuk auto-cancel booking & reminder
+- [x] Siapkan environment production (`.env` production, storage link, `npm run build`)
+- [x] Dokumentasi deployment (README deployment steps)
+- [x] UAT (User Acceptance Test) bersama calon pemilik rental mobil
 
 ## Fase 12 (Opsional/Lanjutan) — Persiapan Multi-Tenant
 

@@ -18,6 +18,19 @@
                 </div>
             </div>
         @endif
+        
+        @if(session('error'))
+            <div class="mb-8 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-sm">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-bold text-red-800">{{ session('error') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
             <div class="bg-primary-600 px-8 py-6 text-white flex justify-between items-center">
@@ -76,7 +89,7 @@
 
                 <!-- Price Details -->
                 <div class="mt-8 bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Rincian Biaya</h3>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Rincian Biaya & Pembayaran</h3>
                     <div class="space-y-2 text-sm mb-4">
                         <div class="flex justify-between"><span class="text-gray-600">Harga per Hari</span> <span class="font-medium">Rp {{ number_format($booking->price_per_day, 0, ',', '.') }}</span></div>
                         <div class="flex justify-between"><span class="text-gray-600">Total Durasi</span> <span class="font-medium">{{ $booking->total_days }} Hari</span></div>
@@ -86,22 +99,57 @@
                         <span class="text-xl font-bold text-gray-900">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</span>
                     </div>
 
+                    @php
+                        $paidAmount = $booking->payments->where('status', 'verified')->sum('amount');
+                        $remainingAmount = $booking->total_price - $paidAmount;
+                    @endphp
+
+                    <div class="border-t border-gray-200 pt-4 mb-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-600">Sudah Dibayar</span>
+                            <span class="font-medium text-green-600">Rp {{ number_format($paidAmount, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-900 font-bold">Sisa Tagihan</span>
+                            <span class="font-bold text-red-600">Rp {{ number_format($remainingAmount > 0 ? $remainingAmount : 0, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+
                     @if($booking->payment_status->value === 'unpaid')
-                        <div class="bg-blue-100 border border-blue-200 rounded-xl p-4 flex justify-between items-center">
+                        <div class="bg-blue-100 border border-blue-200 rounded-xl p-4 flex justify-between items-center mt-4">
                             <div>
-                                <span class="text-blue-900 font-bold block">DP Minimum yang Harus Dibayar</span>
+                                <span class="text-blue-900 font-bold block">Tagihan Saat Ini (DP Minimum)</span>
                                 <span class="text-blue-700 text-xs">Batas waktu: 24 Jam sejak pemesanan</span>
                             </div>
-                            <span class="text-2xl font-extrabold text-blue-800">Rp {{ number_format($booking->dp_amount, 0, ',', '.') }}</span>
+                            <span class="text-xl font-extrabold text-blue-800">Rp {{ number_format($booking->dp_amount, 0, ',', '.') }}</span>
+                        </div>
+                    @elseif($booking->payment_status->value === 'dp_paid')
+                        <div class="bg-orange-100 border border-orange-200 rounded-xl p-4 flex justify-between items-center mt-4">
+                            <div>
+                                <span class="text-orange-900 font-bold block">Tagihan Pelunasan</span>
+                                <span class="text-orange-700 text-xs">Batas waktu: Saat pengambilan kendaraan</span>
+                            </div>
+                            <span class="text-xl font-extrabold text-orange-800">Rp {{ number_format($remainingAmount, 0, ',', '.') }}</span>
                         </div>
                     @endif
                 </div>
 
-                @if($booking->payment_status->value === 'unpaid')
+                @if($booking->payment_status->value === 'unpaid' || $booking->payment_status->value === 'dp_paid')
+                    <div class="mt-8 text-center flex flex-col md:flex-row justify-center gap-4">
+                        <a href="{{ route('public.payment.checkout', $booking->booking_code) }}" class="inline-block w-full md:w-auto px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1">
+                            {{ $booking->payment_status->value === 'unpaid' ? 'Bayar DP Sekarang' : 'Bayar Pelunasan Sekarang' }}
+                        </a>
+                        @if($booking->payment_status->value === 'dp_paid')
+                            <a href="{{ route('public.payment.invoice', $booking->booking_code) }}" class="inline-block w-full md:w-auto px-8 py-4 bg-white border-2 border-primary-600 text-primary-700 font-bold rounded-xl shadow-sm hover:bg-primary-50 transition-all">
+                                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Download Kwitansi DP
+                            </a>
+                        @endif
+                    </div>
+                @elseif($booking->payment_status->value === 'paid_full')
                     <div class="mt-8 text-center">
-                        <button onclick="alert('Integrasi Payment Gateway akan dilakukan pada Fase 7.')" class="w-full md:w-auto px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-1">
-                            Bayar Sekarang (Simulasi Gateway)
-                        </button>
+                        <a href="{{ route('public.payment.invoice', $booking->booking_code) }}" class="inline-block w-full md:w-auto px-8 py-4 bg-white border-2 border-primary-600 text-primary-700 font-bold rounded-xl shadow-sm hover:bg-primary-50 transition-all transform hover:-translate-y-1">
+                            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Download Invoice (Lunas)
+                        </a>
                     </div>
                 @endif
 

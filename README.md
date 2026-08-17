@@ -1,59 +1,150 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Panduan Deployment (Production)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Dokumen ini berisi panduan teknis langkah demi langkah untuk melakukan *deployment* aplikasi **AutoRent** ke server produksi (VPS Ubuntu/Debian atau panel server dengan akses SSH).
 
-## About Laravel
+## 1. Persyaratan Sistem (System Requirements)
+Pastikan server produksi Anda telah memenuhi persyaratan berikut:
+- PHP >= 8.2
+- Ekstensi PHP: BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML, cURL.
+- MySQL >= 8.0 atau MariaDB >= 10.3
+- Composer >= 2.0
+- Node.js >= 20.x & NPM
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 2. Persiapan Direktori & Kloning Repository
+1. Masuk ke server melalui SSH.
+2. Buat direktori (folder) aplikasi, contoh: `/var/www/rentalmobil`.
+3. Klon kode aplikasi dari repository Git atau unggah file *source code* secara langsung.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 3. Instalasi Dependency
+Masuk ke direktori utama aplikasi dan jalankan perintah:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+# Instal library PHP (tanpa paket development)
+composer install --optimize-autoloader --no-dev
 
-## Learning Laravel
+# Instal library NPM
+npm install
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 4. Konfigurasi Environment (`.env`)
+Salin template konfigurasi:
+```bash
+cp .env.example .env
+```
+Lalu edit file `.env` (misal menggunakan `nano .env`) dan sesuaikan beberapa paramater krusial ini:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```env
+APP_NAME=AutoRent
+APP_ENV=production
+APP_KEY= # (nanti diisi oleh perintah artisan generate)
+APP_DEBUG=false
+APP_URL=https://rentalmobil.com # Sesuaikan domain Anda
 
-## Laravel Sponsors
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database_anda
+DB_USERNAME=user_database_anda
+DB_PASSWORD=password_database_anda
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Konfigurasi Queue (Wajib diganti ke database/redis untuk production agar tidak sinkron/lemot)
+QUEUE_CONNECTION=database
 
-### Premium Partners
+# Kunci API Midtrans (Gunakan kunci Production)
+MIDTRANS_SERVER_KEY=Mid-server-xxx
+MIDTRANS_CLIENT_KEY=Mid-client-xxx
+MIDTRANS_IS_PRODUCTION=true
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Kunci API WhatsApp (Fonnte)
+FONNTE_TOKEN=TokenAndaDariFonnte
+```
 
-## Contributing
+## 5. Inisialisasi Aplikasi (Generate Key & Database)
+Jalankan rentetan perintah berikut:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+# Generate Security Key
+php artisan key:generate
 
-## Code of Conduct
+# Lakukan Migrasi Struktur Database beserta Data Awal (Seeder)
+php artisan migrate --force
+php artisan db:seed --force
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Sinkronisasi folder penyimpanan file (KTP/SIM/Foto Mobil) ke folder publik
+php artisan storage:link
+```
 
-## Security Vulnerabilities
+## 6. Build Frontend Assets
+Aplikasi ini memiliki multi-entry asset (Satu untuk publik menggunakan Tailwind, satu untuk admin menggunakan AdminLTE). Build keduanya untuk *production* agar file CSS/JS di-minify:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+npm run build
+```
 
-## License
+## 7. Optimasi Cache Laravel
+Untuk meningkatkan performa baca di server produksi, gunakan *caching* bawaan Laravel:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan event:cache
+```
+
+## 8. Mengatur Worker Queue (Supervisor)
+Karena pengiriman notifikasi WhatsApp diatur agar berjalan di latar belakang (melalui `Jobs`), Anda wajib mengonfigurasi **Supervisor** agar antrean pengiriman pesan terus dieksekusi secara instan.
+
+1. Install supervisor (Jika di Ubuntu): `sudo apt install supervisor`
+2. Buat konfigurasi baru: `sudo nano /etc/supervisor/conf.d/rentalmobil-worker.conf`
+3. Isi konfigurasinya dengan:
+
+```ini
+[program:rentalmobil-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/rentalmobil/artisan queue:work database --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/rentalmobil/storage/logs/worker.log
+stopwaitsecs=3600
+```
+
+4. Simpan, dan jalankan perintah:
+```bash
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start rentalmobil-worker:*
+```
+
+## 9. Mengatur Scheduled Tasks (Cronjob)
+Aplikasi ini memiliki fitur **Auto-Cancel Booking** (pembatalan booking yang tidak dibayar dalam 24 jam) yang harus dijalankan secara berkala (setiap jam).
+Konfigurasikan Cron di server Linux Anda:
+
+```bash
+crontab -e
+```
+
+Tambahkan baris berikut di paling bawah (ganti `/var/www/rentalmobil` sesuai path aplikasi Anda):
+
+```bash
+* * * * * cd /var/www/rentalmobil && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## 10. Pengaturan Web Server & Permissions
+Pastikan _web server_ Anda (Nginx/Apache) mengarah ke direktori `public/` sebagai *Document Root*.
+
+Beri hak akses baca-tulis kepada pengguna *web server* (`www-data` di Ubuntu) pada folder `storage` dan `bootstrap/cache`:
+
+```bash
+sudo chown -R www-data:www-data /var/www/rentalmobil/storage
+sudo chown -R www-data:www-data /var/www/rentalmobil/bootstrap/cache
+sudo chmod -R 775 /var/www/rentalmobil/storage
+sudo chmod -R 775 /var/www/rentalmobil/bootstrap/cache
+```
+
+## Selesai!
+Aplikasi rental mobil Anda kini siap digunakan secara publik!

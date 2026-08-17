@@ -20,9 +20,9 @@ class ReportController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
             
-        $totalRevenue = $bookings->whereIn('status', ['completed', 'active', 'confirmed'])->sum('total_price');
+        $totalRevenue = $bookings->filter(function($b) { return in_array($b->status->value, ['completed', 'active', 'confirmed']); })->sum('total_price');
         $totalBookings = $bookings->count();
-        $completedBookings = $bookings->where('status', 'completed')->count();
+        $completedBookings = $bookings->filter(function($b) { return $b->status->value === 'completed'; })->count();
         
         return view('admin.reports.index', compact(
             'bookings', 
@@ -44,7 +44,7 @@ class ReportController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
             
-        $totalRevenue = $bookings->whereIn('status', ['completed', 'active', 'confirmed'])->sum('total_price');
+        $totalRevenue = $bookings->filter(function($b) { return in_array($b->status->value, ['completed', 'active', 'confirmed']); })->sum('total_price');
         
         $pdf = Pdf::loadView('admin.reports.pdf', compact('bookings', 'startDate', 'endDate', 'totalRevenue'));
         $pdf->setPaper('A4', 'landscape');
